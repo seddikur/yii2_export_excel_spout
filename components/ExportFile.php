@@ -76,6 +76,9 @@ class ExportFile extends Widget
         $this->save();
         return $this->render(
             'view',
+             [
+                'filename' =>$this->filename
+            ]
         );
     }
 
