@@ -48,7 +48,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     echo \app\components\ExportFile::widget([
 //        'data' => $array,
-        'data' => ArrayHelper::toArray($dataProvider->query->all()),
+     //   'data' => ArrayHelper::toArray($dataProvider->query->all()),
+     'data' => ArrayHelper::toArray($dataProvider->getModels()),
         'filename' => 'data.xlsx'
     ]);
 
