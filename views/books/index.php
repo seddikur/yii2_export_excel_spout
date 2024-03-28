@@ -40,17 +40,24 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ];
 
+    /**
+     * Это тестовый виджет для примера
+     */
     echo \app\components\CsvExport::widget([
         'data' => $array,
         'saveDir' => 'web/export',
 
     ]);
 
+    /**
+     * Виджет работает таким образом,
+     * что при загрузке страницы создается файл
+     */
     echo \app\components\ExportFile::widget([
 //        'data' => $array,
-     //   'data' => ArrayHelper::toArray($dataProvider->query->all()),
-     'data' => ArrayHelper::toArray($dataProvider->getModels()),
-        'filename' => 'data.xlsx'
+        'data' => ArrayHelper::toArray($dataProvider->query->all()),
+//     'data' => ArrayHelper::toArray($dataProvider->getModels()),
+        'filename' => 'books.xlsx'
     ]);
 
     ?>

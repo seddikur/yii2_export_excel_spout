@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controllers;
 
 use app\models\Authors;
@@ -143,13 +144,13 @@ class BooksController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-/**
+    /**
      * Ссылка для скачивания
      * @return \yii\console\Response|\yii\web\Response
      */
     public function actionDownload($filename)
     {
-        $file = \Yii::$app->basePath . "/runtime/export/".$filename;
+        $file = \Yii::$app->basePath . "/runtime/export/" . $filename;
         return \Yii::$app->response->sendFile($file);
     }
 }

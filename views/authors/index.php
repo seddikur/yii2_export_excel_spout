@@ -19,7 +19,25 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Create Authors', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-
+    <p>
+        <?php
+        /**
+         * Кнопка для перехода на страницу для загрузки файла
+         * здесь нужно указать название файла
+         */
+        echo Html::a(' Скачать Excel',
+            [
+                'download',
+                'filename' => 'author.xlsx',
+            ],
+            [
+                'class' => 'btn btn-success',
+                'target' => '_blank',
+                'data-pjax' => "0"
+            ]
+        );
+        ?>
+    </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -33,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Authors $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
-                 }
+                }
             ],
         ],
     ]); ?>

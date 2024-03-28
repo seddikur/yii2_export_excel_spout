@@ -1,7 +1,8 @@
 <?php
 use yii\helpers\Html;
 
-echo  Html::a(' Скачать',
+/** @var  $filename */
+echo  Html::a(' Скачать Excel',
 //                ['app/runtime/export/data.xlsx'],
      ['download', 'filename'=>$filename],
     ['class' => 'btn btn-success']

@@ -2,8 +2,11 @@
 
 namespace app\controllers;
 
+use app\factories\ExportFileFactory;
 use app\models\Authors;
 use yii\data\ActiveDataProvider;
+use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -13,6 +16,8 @@ use yii\filters\VerbFilter;
  */
 class AuthorsController extends Controller
 {
+
+    public $dataProvider;
     /**
      * @inheritDoc
      */
@@ -51,6 +56,8 @@ class AuthorsController extends Controller
             ],
             */
         ]);
+        //для передачи в загрузку
+        $this->dataProvider = $dataProvider;
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -140,5 +147,25 @@ class AuthorsController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Лист на котором будет автоматическое созание и скачивание
+     * @param $filename
+     * @return string
+     */
+    public function actionDownload($filename)
+    {
+
+        $export = new ExportFileFactory();
+        $export->Export($filename);
+//        $file = \Yii::$app->basePath . "/runtime/export/" . $filename;
+
+//        VarDumper::dump($this->dataProvider, 10, true); die();
+//        return \Yii::$app->response->sendFile($file);
+        return $this->render('download', [
+//            'dataProvider'=>ArrayHelper::toArray($this->dataProvider->query->all()),
+//            'filename' => \Yii::$app->response->sendFile($file)
+        ]);
     }
 }
