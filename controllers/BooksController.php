@@ -143,14 +143,13 @@ class BooksController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-
-    /**
+/**
      * Ссылка для скачивания
      * @return \yii\console\Response|\yii\web\Response
      */
-    public function actionDownload()
+    public function actionDownload($filename)
     {
-        $file = \Yii::$app->basePath . "/runtime/export/".'data.xlsx';
+        $file = \Yii::$app->basePath . "/runtime/export/".$filename;
         return \Yii::$app->response->sendFile($file);
     }
 }
