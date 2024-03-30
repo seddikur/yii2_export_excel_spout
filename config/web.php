@@ -58,7 +58,8 @@ $config = [
 
     ],
     'controllerMap' => [
-
+        'exportPhp' => 'app\components\controllers\ExportController'
+//        'exportPhp' => 'phpnt\exportFile\controllers\ExportController'
     ],
     'params' => $params,
 ];

@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\factories\ExportFileFactory;
 use app\models\Authors;
+use app\models\AuthorsSearch;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
@@ -43,23 +44,11 @@ class AuthorsController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Authors::find(),
-            /*
-            'pagination' => [
-                'pageSize' => 50
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ]
-            ],
-            */
-        ]);
-        //для передачи в загрузку
-        $this->dataProvider = $dataProvider;
+        $searchModel = new AuthorsSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -148,24 +137,55 @@ class AuthorsController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
-    /**
-     * Лист на котором будет автоматическое созание и скачивание
-     * @param $filename
-     * @return string
-     */
-    public function actionDownload($filename)
-    {
-
-        $export = new ExportFileFactory();
-        $export->Export($filename);
-//        $file = \Yii::$app->basePath . "/runtime/export/" . $filename;
-
-//        VarDumper::dump($this->dataProvider, 10, true); die();
-//        return \Yii::$app->response->sendFile($file);
-        return $this->render('download', [
-//            'dataProvider'=>ArrayHelper::toArray($this->dataProvider->query->all()),
-//            'filename' => \Yii::$app->response->sendFile($file)
-        ]);
-    }
+//
+//    public function actionExcel()
+//    {
+//        $data = $this->getData();
+//        $searchModel    = $data['searchModel'];
+//        $dataProvider   = $data['dataProvider'];
+//        $title          = $data['title'];
+//        $tableName      = $data['tableName'];
+//        $fields         = $this->getFieldsKeys($searchModel->exportFields());
+//
+//        $objPHPExcel = new \PHPExcel();
+//        $objPHPExcel->setActiveSheetIndex(0);
+//        $objPHPExcel->getActiveSheet()->setTitle($title ? $title : $tableName);
+//        $letter = 65;
+//        foreach ($fields as $one) {
+//            $objPHPExcel->getActiveSheet()->getColumnDimension(chr($letter))->setAutoSize(true);
+//            $letter++;
+//        }
+//        $letter = 65;
+//        foreach ($fields as $one) {
+//            $objPHPExcel->getActiveSheet()->setCellValue(chr($letter).'1', $searchModel->getAttributeLabel($one));
+//            $objPHPExcel->getActiveSheet()->getStyle(chr($letter).'1')->getAlignment()->setHorizontal(
+//                \PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+//            $letter++;
+//        }
+//        $row = 2;
+//        $letter = 65;
+//        foreach ($dataProvider->getModels() as $model) {
+//            foreach ($searchModel->exportFields() as $one) {
+//                if (is_string($one)) {
+//                    $objPHPExcel->getActiveSheet()->setCellValue(chr($letter).$row,$model[$one]);
+//                    $objPHPExcel->getActiveSheet()->getStyle(chr($letter).$row)->getAlignment()->setHorizontal(
+//                        \PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+//                } else {
+//                    $objPHPExcel->getActiveSheet()->setCellValue(chr($letter).$row,$one($model));
+//                    $objPHPExcel->getActiveSheet()->getStyle(chr($letter).$row)->getAlignment()->setHorizontal(
+//                        \PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+//                }
+//                $letter++;
+//            }
+//            $letter = 65;
+//            $row++ ;
+//        }
+//
+//        header('Content-Type: application/vnd.ms-excel');
+//        $filename = $tableName.".xls";
+//        header('Content-Disposition: attachment;filename='.$filename);
+//        header('Cache-Control: max-age=0');
+//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+//        $objWriter->save('php://output');
+//    }
 }

@@ -106,6 +106,13 @@ class ExportFile extends Widget
         $this->writer->close();
     }
 
+    /**
+     * @return $this
+     * @throws \Box\Spout\Common\Exception\IOException
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
+     * @throws \Box\Spout\Common\Exception\SpoutException
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException
+     */
     public function writerTable()
     {
         $data_array = $this->data;
@@ -134,7 +141,6 @@ class ExportFile extends Widget
                     ->setShouldWrapText()
                     ->setBorder($border)
                     ->build();
-
                 $this->writer->addRowWithStyle(array_keys($value), $style);
 //                $this->writer->addRow(array_keys($value));
             }
@@ -146,6 +152,8 @@ class ExportFile extends Widget
                 $columnValue = $column;
                 $rowData[] = $columnValue;
             }
+//            VarDumper::dump($rowData, 10, true);
+//            die();
             $this->writer->addRow($rowData);
         }
         $this->isRendered = true;

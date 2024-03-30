@@ -14,7 +14,7 @@ class m231102_073936_seed_book_table extends Migration
     {
         {
             $faker = \Faker\Factory::create();
-            for ($i = 0; $i < 45050; $i++) {
+            for ($i = 0; $i < 5050; $i++) {
                 $this->insert(
                     'books',
                     [
