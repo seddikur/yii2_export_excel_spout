@@ -20,7 +20,7 @@ class m231102_073936_seed_book_table extends Migration
                     [
                         'title'         => $faker->catchPhrase,
                         'publish_year' => (int)$faker->year,
-                        'author_id'  => (int)rand(1, 20),
+                        'author_id'  => (int)rand(1, 200),
                         //'created_at' => (new \yii\db\Expression('NOW()')),
                         'pages' =>(int)rand(1, 300),
                     ]

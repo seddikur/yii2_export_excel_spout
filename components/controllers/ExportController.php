@@ -13,6 +13,7 @@ use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\Border;
 use Box\Spout\Writer\Style\BorderBuilder;
 use Box\Spout\Writer\Style\Color;
+use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Writer;
@@ -60,7 +61,7 @@ class ExportController extends Controller
         $this->writer->openToFile($saveDir . DIRECTORY_SEPARATOR . $tableName . '.xlsx');
 
         //заполняем файл
-        $this->writerTable($dataProvider, $searchModel);
+        $this->writerTable($dataProvider, $searchModel, $fields);
 //        try {
 
         //Закрывает программу записи. Это также закроет стример, предотвращая появление новых данных
@@ -356,7 +357,7 @@ class ExportController extends Controller
         return $fields;
     }
 
-    public function writerTable($dataProvider, $searchModel)
+    public function writerTable($dataProvider, $searchModel, $fields)
     {
         //Создает новый лист и делает его текущим листом. Теперь данные будут записаны на этот лист.
         if ($this->isRendered) {
@@ -366,30 +367,26 @@ class ExportController extends Controller
         //для записи строки столбцов один раз
         $columnsInitialized = false;
         $dataRow = [];
+        //формирование массив название столбцов
+        foreach ($fields as $field) {
+            $dataRow [] = $searchModel->getAttributeLabel($field);
+        }
 
+        //формирование массива строк
         foreach ($dataProvider->getModels() as $model) {
             $rowData = [];
             foreach ($searchModel->exportFields() as $one) {
 
-                //формирование массив название столбцов
-                if (!in_array($one, $dataRow)) {
                     if (is_string($one)) {
-                        $dataRow [] = $one;
+                        $rowData[] = $model[$one];
                     } else {
-                        VarDumper::dump($one($model));
-                        die();
-                        $dataRow [] = $one($model);
+                        $rowData [] = $one($model);
                     }
-                }
             }
-            //формирование массива строк
-            foreach ($model as $column) {
-                $columnValue = $column;
-                $rowData[] = $columnValue;
-            }
+
+            // записываем шапку
             if (!$columnsInitialized) {
                 $columnsInitialized = true;
-                // записываем шапку
                 $border = (new BorderBuilder())
                     ->setBorderBottom(Color::BLACK, Border::WIDTH_MEDIUM, Border::STYLE_SOLID)
                     ->build();
@@ -404,8 +401,14 @@ class ExportController extends Controller
 
                 $this->writer->addRowWithStyle($dataRow, $style);
             }
+
             // записываем строки
-            $this->writer->addRow($rowData);
+            $style = (new StyleBuilder())
+                ->setFontSize(12)
+                ->setShouldWrapText()
+                ->build();
+            $this->writer->addRowWithStyle($rowData, $style);
+//            $this->writer->addRow($rowData);
         }
 
 //        VarDumper::dump($rowData, 10, true);

@@ -8,6 +8,7 @@ use yii\grid\ActionColumn;
 use yii\grid\GridView;
 
 /** @var yii\web\View $this */
+/** @var app\models\BooksSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Books';
@@ -57,14 +58,47 @@ $this->params['breadcrumbs'][] = $this->title;
 //        'data' => $array,
         'data' => ArrayHelper::toArray($dataProvider->query->all()),
 //     'data' => ArrayHelper::toArray($dataProvider->getModels()),
-        'filename' => 'books.xlsx'
+        'filename' => 'booksFile.xlsx'
     ]);
 
     ?>
 
+    <?php
+    echo \app\components\ExportPhp::widget([
+        'model' => 'app\models\BooksSearch',   // путь к модели
+        // 'searchAttributes'  => $searchModel,                    // фильтр
+        'title' => 'Заголовок документа',
+        'queryParams' => Yii::$app->request->queryParams,
+
+
+        'getAll' => true,                               // все записи - true, учитывать пагинацию - false
+        'csvCharset' => 'Windows-1251',                      // кодировка csv файла: 'UTF-8' (по умолчанию) или 'Windows-1251'
+
+        'buttonClass' => 'btn btn-primary',                   // класс кнопки
+        'blockClass' => 'pull-left',                         // класс блока в котором кнопка
+        'blockStyle' => 'padding: 5px;',                     // стиль блока в котором кнопка
+
+        // экспорт в следующие файлы (true - разрешить, false - запретить)
+        'xls' => true,
+        'csv' => true,
+        'word' => false,
+        'html' => true,
+        'pdf' => false,
+
+        // шаблоны кнопок
+        'xlsButtonName' => 'Excel',
+        'csvButtonName' => 'CSV',
+        'wordButtonName' => 'Word',
+        'htmlButtonName' => 'HTML',
+        'pdfButtonName' => 'PDF'
+
+
+    ]) ?>
+
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
         'pager' => [
             'class' => 'yii\bootstrap5\LinkPager'
         ],
@@ -72,7 +106,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'title',
-            'author.surname',
+//            'author.surname',
+            [
+                'attribute' => 'author_id',
+                'format' => 'text',
+                'value' => function ($model) {
+                    /* @var $model \app\models\Authors */
+                    return $model->author->surname;
+                },
+            ],
             'publish_year',
             //'pages',
             [

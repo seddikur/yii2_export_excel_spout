@@ -14,7 +14,7 @@ class m231102_073540_seed_author_table extends Migration
     {
         $faker = \Faker\Factory::create();
 
-        for ($i = 0; $i < 50020; $i++) {
+        for ($i = 0; $i < 20020; $i++) {
             $this->insert(
                 'authors',
                 [
