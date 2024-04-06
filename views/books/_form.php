@@ -5,8 +5,8 @@ use yii\widgets\ActiveForm;
 use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
-/** @var backend\models\Books $model */
-/** @var backend\models\Authors $authors */
+/** @var app\models\Books $model */
+/** @var app\models\Authors $authors */
 /** @var yii\widgets\ActiveForm $form */
 ?>
 

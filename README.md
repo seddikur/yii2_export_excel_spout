@@ -1,5 +1,8 @@
 ## yii2 export boocks
 
+В проекте реализован экспорт в excel на основании библиотеки "box/spout"
+Документация https://opensource.box.com/spout/
+
 # Порядок установки проекта
 
 * Запуск Docker `` docker compose up -d ``

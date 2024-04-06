@@ -102,6 +102,7 @@ class BooksController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'authors' => Authors::find()->all(),
         ]);
     }
 

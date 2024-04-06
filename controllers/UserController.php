@@ -2,17 +2,41 @@
 
 namespace app\controllers;
 
+use backend\forms\user\RoleForm;
+use backend\forms\user\UserForm;
+use backend\models\search\UserSearch;
+use backend\services\user\UserService;
+use common\helpers\RbacHelper;
 use app\models\User;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * UserController implements the CRUD actions for User model.
  */
 class UserController extends Controller
 {
+    protected UserService $userService;
+
+    /**
+     * @param string $id
+     * @param Module $module
+     * @param UserService $userService
+     * @param array $config
+     */
+    public function __construct(
+        string $id,
+        Module $module,
+        UserService $userService,
+        array $config = []
+    ) {
+        parent::__construct($id, $module, $config);
+        $this->userService = $userService;
+    }
+
     /**
      * @inheritDoc
      */
@@ -71,43 +95,67 @@ class UserController extends Controller
     }
 
     /**
-     * Creates a new User model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
+     * @return array|string|Response
      */
     public function actionCreate()
     {
-        $model = new User();
+        $modelForm = new UserForm();
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $modelForm->load(Yii::$app->request->post());
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            return ActiveForm::validate($modelForm);
+        }
+
+        if ($modelForm->load(\Yii::$app->request->post())) {
+            try {
+                $model = $this->userService->create($modelForm->attributes);
+                Yii::$app->session->setFlash('success', 'Пользователь успешно создан');
+                return $this->redirect(['update', 'id' => $model->id]);
+            } catch (\Exception $e) {
+                Yii::error($e->getMessage(), 'user');
+                Yii::$app->session->setFlash('error', $e->getMessage());
             }
-        } else {
-            $model->loadDefaultValues();
         }
 
         return $this->render('create', [
-            'model' => $model,
+            'userForm' => $modelForm,
         ]);
     }
 
     /**
-     * Updates an existing User model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * @param $id
+     * @return array|string|Response
+     * @throws NotFoundHttpException
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $userForm = new UserForm();
+        $userForm->prepareUpdate($model);
+        $roleForm = new RoleForm();
+        $roleForm->prepareUpdate($model);
+        if (Yii::$app->request->isAjax) {
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            $userForm->load(Yii::$app->request->post());
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return ActiveForm::validate($userForm);
+        }
+
+        if ($userForm->load(\Yii::$app->request->post())) {
+            try {
+                $model = $this->userService->update($model, $userForm->attributes);
+                Yii::$app->session->setFlash('success', 'Пользователь успешно изменен');
+                return $this->redirect(['update', 'id' => $model->id]);
+            } catch (\Exception $e) {
+                Yii::error($e->getMessage(), 'user');
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
         }
 
         return $this->render('update', [
+            'userForm' => $userForm,
+            'roleForm' => $roleForm,
             'model' => $model,
         ]);
     }
