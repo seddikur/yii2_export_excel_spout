@@ -2,13 +2,6 @@
 
 namespace app\components\controllers;
 
-/**
- *
- */
-
-/* @var $dataProvider \yii\data\ActiveDataProvider */
-
-
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\Border;
 use Box\Spout\Writer\Style\BorderBuilder;
@@ -24,6 +17,12 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\helpers\VarDumper;
 use yii\web\Controller;
+
+
+/* @var $dataProvider \yii\data\ActiveDataProvider */
+
+
+//ini_set("memory_limit", "512M");
 
 class ExportController extends Controller
 {
